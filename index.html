@@ -360,39 +360,47 @@
         camera.position.z = 2;
 
         let isDragging = false;
+        let initialRotation = { x: 0, y: 0 }; // Store initial rotation
         let previousMousePosition = { x: 0, y: 0 };
 
         renderer.domElement.addEventListener('mousedown', (e) => {
-            isDragging = true;
+            if (e.button === 0) { // Only respond to left click
+                isDragging = true;
+                initialRotation = { x: pepe.rotation.x, y: pepe.rotation.y }; // Store initial rotation
+                previousMousePosition = { x: e.clientX, y: e.clientY }; // Update initial mouse position
+            }
         });
 
         renderer.domElement.addEventListener('mouseup', () => {
-            isDragging = false;
+            if (isDragging) {
+                isDragging = false;
+                pepe.rotation.x = initialRotation.x; // Revert to initial rotation on release
+                pepe.rotation.y = initialRotation.y; // Revert to initial rotation on release
+            }
         });
 
         renderer.domElement.addEventListener('mousemove', (e) => {
             if (isDragging) {
                 const deltaMove = {
-                    x: e.offsetX - previousMousePosition.x,
-                    y: e.offsetY - previousMousePosition.y
+                    x: e.clientX - previousMousePosition.x,
+                    y: e.clientY - previousMousePosition.y
                 };
 
                 pepe.rotation.y += deltaMove.x * 0.01;
                 pepe.rotation.x += deltaMove.y * 0.01;
-            }
 
-            previousMousePosition = {
-                x: e.offsetX,
-                y: e.offsetY
-            };
+                previousMousePosition = {
+                    x: e.clientX,
+                    y: e.clientY
+                };
+            }
         });
 
         function animatePepe() {
-            pepe.rotation.y += 0.01;
-            pepe.rotation.x += 0.01;
             requestAnimationFrame(animatePepe);
             renderer.render(scene, camera);
         }
+
 
         // Particle System
         const particleCount = 1000;
@@ -401,7 +409,7 @@
         const colors = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
         const velocities = new Float32Array(particleCount * 3);
-        const maxVelocity = 0.15;  // Limit for velocity
+        const maxVelocity = 0.05;  // Limit for velocity
 
         for (let i = 0; i < particleCount; i++) {
             positions[i * 3] = (Math.random() - 0.5) * 10;
@@ -444,6 +452,15 @@
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         });
 
+        function wrapAround(position, boundary) {
+            if (position > boundary) {
+                return -boundary;
+            } else if (position < -boundary) {
+                return boundary;
+            }
+            return position;
+        }
+
         function animateParticles() {
             const positions = particles.attributes.position.array;
             const sizes = particles.attributes.size.array;
@@ -475,11 +492,13 @@
                 velocitiesArray[i + 1] = Math.max(-maxVelocity, Math.min(maxVelocity, velocitiesArray[i + 1]));
                 velocitiesArray[i + 2] = Math.max(-maxVelocity, Math.min(maxVelocity, velocitiesArray[i + 2]));
 
+                // Update particle sizes dynamically
                 sizes[i / 3] = (Math.sin(i / 10 + performance.now() / 1000) + 1.5) * 2.5;
 
-                if (positions[i] < -5 || positions[i] > 5) velocitiesArray[i] *= -1;
-                if (positions[i + 1] < -5 || positions[i + 1] > 5) velocitiesArray[i + 1] *= -1;
-                if (positions[i + 2] < -5 || positions[i + 2] > 5) velocitiesArray[i + 2] *= -1;
+                // Wrap around logic
+                positions[i] = wrapAround(positions[i], 5);
+                positions[i + 1] = wrapAround(positions[i + 1], 5);
+                positions[i + 2] = wrapAround(positions[i + 2], 5);
             }
 
             particles.attributes.position.needsUpdate = true;
