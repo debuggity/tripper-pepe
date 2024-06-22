@@ -71,20 +71,41 @@
             margin-top: 2rem;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Ensures elements are spread out */
             background: rgba(255, 255, 255, 0.1);
-            padding: 0.5rem;
+            padding: 0.5rem 1rem;
             border-radius: 5px;
-            padding: 1rem;
-            max-height: 100vh;
+            max-width: 100%; /* Ensures the container doesn't exceed the screen width */
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            min-height: 50px;
+        }
+
+        .ca-container::-webkit-scrollbar {
+            display: none; /* Hides scrollbar */
+        }
+
+        /* Hide scrollbar for Firefox */
+        .ca-container {
+            scrollbar-width: none; /* Firefox specific: hides scrollbar */
+        }
+
+        /* Edge and Internet Explorer 10+ */
+        .ca-container {
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
         }
 
         .ca {
             font-size: 1rem;
-            margin-right: 1rem;
+            word-wrap: break-word; /* Ensures the text wraps to fit the container */
+            max-width: calc(100% - 100px); /* Adjusts to leave space for the button */
+            overflow: hidden; /* Hides any overflow text */
+            text-overflow: ellipsis; /* Adds ellipsis for overflowed text */
         }
 
         .copy-btn {
-            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background: linear-gradient(45deg, red, orange, rgb(205, 205, 26), green, blue, indigo, violet);
             background-size: 400% 400%;
             animation: gradientShift 5s ease infinite;
             border: none;
@@ -94,10 +115,11 @@
             text-decoration: none;
             display: inline-block;
             font-size: 1rem;
-            margin: 4px 2px;
+            margin-left: 10px; /* Adds space between the text and button */
             cursor: pointer;
             border-radius: 5px;
             transition: background 0.3s, transform 0.3s;
+            white-space: nowrap; /* Prevents the button text from wrapping */
         }
 
         @keyframes gradientShift {
@@ -199,6 +221,23 @@
             #visualizer {
                 height: 60px;
             }
+
+            .ca-container {
+                flex-direction: column;
+                align-items: flex-start; /* Align items to the start for better wrapping */
+                padding: 0.5rem;
+            }
+
+            .ca {
+                font-size: 0.9rem;
+                max-width: 100%; /* Allows full width usage on small screens */
+                margin-bottom: 0.5rem; /* Adds space between the text and button */
+            }
+
+            .copy-btn {
+                width: 100%; /* Makes the button full width on small screens */
+                text-align: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -213,6 +252,10 @@
             .pepe-container {
                 width: 150px;
                 height: 150px;
+            }
+
+            .ca {
+                font-size: 0.8rem; /* Smaller font size for very small screens */
             }
         }
     </style>
