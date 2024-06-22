@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TRIPPER PEPE - The frog that ate one too many...</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
@@ -36,6 +36,7 @@
             font-size: 5rem;
             text-align: center;
             margin-bottom: 1rem;
+            margin-top: 6rem; /* Add margin to the top */
             animation: colorChange 5s infinite;
         }
 
@@ -73,6 +74,9 @@
             background: rgba(255, 255, 255, 0.1);
             padding: 0.5rem;
             border-radius: 5px;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 100vh;
         }
 
         .ca {
@@ -163,17 +167,59 @@
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 3rem;
+                font-size: 2.5rem;
             }
 
             .ticker {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
+            }
+
+            .origin {
+                font-size: 1rem;
+                padding: 0.5rem;
+            }
+
+            .pepe-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .social-buttons {
+                flex-wrap: wrap;
+            }
+
+            .social-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            #audioPlayer {
+                width: 80%;
+            }
+
+            #visualizer {
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .ticker {
+                font-size: 1rem;
+            }
+
+            .pepe-container {
+                width: 150px;
+                height: 150px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="overflow-y: auto; max-height: 100vh;">
         <h1>TRIPPER PEPE</h1>
         <div class="ticker">$TRIPR</div>
         <div class="pepe-container">
@@ -418,6 +464,28 @@
         // Initialize visualizer size
         visualizer.width = visualizer.clientWidth;
         visualizer.height = visualizer.clientHeight;
+
+        function updatePepeSize() {
+            const container = document.querySelector('.pepe-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        window.addEventListener('resize', updatePepeSize);
+                updatePepeSize();
+
+                function resizeVisualizer() {
+            const visualizer = document.getElementById('visualizer');
+            visualizer.width = visualizer.clientWidth;
+            visualizer.height = visualizer.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeVisualizer);
+        resizeVisualizer();
+
     </script>
 </body>
 </html>
