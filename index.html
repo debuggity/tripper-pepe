@@ -657,10 +657,10 @@
             visualizer.height = visualizer.clientHeight;
         }
 
-        // Stop audio player when the YouTube video is clicked
+        // Replace the existing YouTube iframe event listener with this updated version
         const youtubeIframe = document.getElementById('youtubeVideo');
         const audioPlayer = document.getElementById('audioPlayer');
-
+        
         youtubeIframe.addEventListener('click', () => {
             if (!audioPlayer.paused) {
                 audioPlayer.pause();
@@ -674,16 +674,26 @@
 
         // Add logic to stop the audio player if YouTube video is played
         youtubeIframe.addEventListener('load', () => {
-            // Listen for messages from YouTube player
-            window.addEventListener('message', (event) => {
-                const data = JSON.parse(event.data);
-                if (data.event === 'infoDelivery' && data.info.playerState === 1) {
-                    if (!audioPlayer.paused) {
-                        audioPlayer.pause();
-                    }
+            // Create a new YouTube player object
+            const player = new YT.Player('youtubeVideo', {
+                events: {
+                    'onStateChange': onPlayerStateChange
                 }
             });
+
+            function onPlayerStateChange(event) {
+                if (event.data == YT.PlayerState.PLAYING) {
+                    audioPlayer.pause();
+                }
+            }
         });
+
+        document.getElementById('youtubeVideo').addEventListener('mouseenter', () => {
+            if (!audioPlayer.paused) {
+                audioPlayer.pause();
+            }
+        });
+
 
 
         window.addEventListener('resize', resizeVisualizer);
