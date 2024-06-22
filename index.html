@@ -203,7 +203,6 @@
             <span class="ca">CA: 3r9NBq46zKp7LKYqDHyBwyA4Vj8tuNazGaaActZSUhv9</span>
             <button class="copy-btn" onclick="copyCA(this)">Copy CA</button>
         </div>
-
         <div class="social-buttons">
             <a href="https://x.com/tripper_pepe" target="_blank">
                 <img src="assets/X.png" alt="Twitter" class="social-icon">
@@ -215,7 +214,6 @@
                 <img src="assets/dexscreen.png" alt="Dexscreen" class="social-icon">
             </a>
         </div>
-
         <audio id="audioPlayer" controls>
             <source src="assets/music.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
@@ -278,7 +276,7 @@
 
         // 3D Pepe Rotation
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(300, 300);
         document.querySelector('.pepe-container').appendChild(renderer.domElement);
@@ -320,6 +318,8 @@
         });
 
         function animatePepe() {
+            pepe.rotation.y += 0.01;
+            pepe.rotation.x += 0.01;
             requestAnimationFrame(animatePepe);
             renderer.render(scene, camera);
         }
@@ -417,10 +417,18 @@
             });
         }
 
+        // Start audio context on user interaction
+        document.body.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+                audioElement.play();
+            }
+        });
+
         // Resize event listener
         window.addEventListener('resize', () => {
             resizeCanvas();
-            camera.aspect = 1;
+            camera.aspect = 300 / 300;
             camera.updateProjectionMatrix();
             renderer.setSize(300, 300);
         });
@@ -428,13 +436,6 @@
         // Initialize visualizer size
         visualizer.width = visualizer.clientWidth;
         visualizer.height = visualizer.clientHeight;
-
-        // Start audio context on user interaction
-        document.body.addEventListener('click', () => {
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        });
     </script>
 </body>
 </html>
