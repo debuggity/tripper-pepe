@@ -394,20 +394,33 @@
             renderer.render(scene, camera);
         }
 
-        // Particle System
+        // Particle System Setup
         const particleCount = 5000;
         const particles = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
 
-        for (let i = 0; i < particleCount * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 10;
-            colors[i] = Math.random();
-        }
-
+        // Initialize positions, colors, and sizes
         for (let i = 0; i < particleCount; i++) {
-            sizes[i] = Math.random() * 0.1 + 0.05;
+            const x = (Math.random() - 0.5) * 10;
+            const y = (Math.random() - 0.5) * 10;
+            const z = (Math.random() - 0.5) * 10;
+
+            positions[i * 3] = isNaN(x) ? 0 : x;
+            positions[i * 3 + 1] = isNaN(y) ? 0 : y;
+            positions[i * 3 + 2] = isNaN(z) ? 0 : z;
+
+            const colorR = Math.random();
+            const colorG = Math.random();
+            const colorB = Math.random();
+
+            colors[i * 3] = isNaN(colorR) ? 0 : colorR;
+            colors[i * 3 + 1] = isNaN(colorG) ? 0 : colorG;
+            colors[i * 3 + 2] = isNaN(colorB) ? 0 : colorB;
+
+            const size = Math.random() * 0.1 + 0.05;
+            sizes[i] = isNaN(size) ? 0.1 : size;
         }
 
         particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -451,22 +464,26 @@
 
             for (let i = 0; i < positions.length; i += 3) {
                 // Dynamic movement
-                positions[i] += Math.sin(time * 0.001 + i) * 0.01;
-                positions[i + 1] += Math.cos(time * 0.002 + i) * 0.01;
-                positions[i + 2] += Math.sin(time * 0.003 + i) * 0.01;
+                const newX = positions[i] + Math.sin(time * 0.001 + i) * 0.01;
+                const newY = positions[i + 1] + Math.cos(time * 0.002 + i) * 0.01;
+                const newZ = positions[i + 2] + Math.sin(time * 0.003 + i) * 0.01;
 
-                // Boundary check and reset
-                if (Math.abs(positions[i]) > 5) positions[i] *= -0.9;
-                if (Math.abs(positions[i + 1]) > 5) positions[i + 1] *= -0.9;
-                if (Math.abs(positions[i + 2]) > 5) positions[i + 2] *= -0.9;
+                positions[i] = isNaN(newX) ? 0 : Math.max(Math.min(newX, 5), -5);
+                positions[i + 1] = isNaN(newY) ? 0 : Math.max(Math.min(newY, 5), -5);
+                positions[i + 2] = isNaN(newZ) ? 0 : Math.max(Math.min(newZ, 5), -5);
 
                 // Color pulsing
-                colors[i] = Math.sin(time * 0.001 + i) * 0.5 + 0.5;
-                colors[i + 1] = Math.sin(time * 0.002 + i) * 0.5 + 0.5;
-                colors[i + 2] = Math.sin(time * 0.003 + i) * 0.5 + 0.5;
+                const newR = Math.sin(time * 0.001 + i) * 0.5 + 0.5;
+                const newG = Math.sin(time * 0.002 + i) * 0.5 + 0.5;
+                const newB = Math.sin(time * 0.003 + i) * 0.5 + 0.5;
+
+                colors[i] = isNaN(newR) ? 0.5 : newR;
+                colors[i + 1] = isNaN(newG) ? 0.5 : newG;
+                colors[i + 2] = isNaN(newB) ? 0.5 : newB;
 
                 // Size pulsing
-                sizes[i / 3] = Math.sin(time * 0.004 + i) * 0.05 + 0.1;
+                const newSize = Math.sin(time * 0.004 + i) * 0.05 + 0.1;
+                sizes[i / 3] = isNaN(newSize) ? 0.1 : newSize;
             }
 
             particles.attributes.position.needsUpdate = true;
@@ -474,7 +491,6 @@
             particles.attributes.size.needsUpdate = true;
         }
 
-        // Update the main animation loop
         function animate(time) {
             drawKaleidoscope(time);
             animateParticles(time);
@@ -483,7 +499,7 @@
         }
 
         animate(0);
-
+        
         // Audio Visualization
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const audioElement = document.getElementById('audioPlayer');
