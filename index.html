@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIPPER PEPE - The frog that ate one too many...</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Permanent Marker', cursive;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            animation: colorChange 5s infinite;
+        }
+
+        .ticker {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .pepe-container {
+            perspective: 1000px;
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .pepe-img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+
+        .origin {
+            max-width: 600px;
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .ca-container {
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .ca {
+            font-size: 1rem;
+            margin-right: 1rem;
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            animation: gradientShift 5s ease infinite;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .copy-btn.copied {
+            transform: scale(1.1);
+        }
+
+        .social-buttons {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.2); 
+            padding: 0.5rem;
+            border-radius: 10px; 
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s, filter 0.3s;
+            filter: drop-shadow(2px 4px 6px black); 
+            border-radius: 50%; 
+            background: #fff;
+            padding: 5px; 
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2) drop-shadow(4px 6px 8px black); 
+        }
+
+        .psychedelic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        @keyframes colorChange {
+            0% { color: #ff00ff; }
+            25% { color: #00ffff; }
+            50% { color: #ffff00; }
+            75% { color: #00ff00; }
+            100% { color: #ff00ff; }
+        }
+
+        #audioPlayer {
+            margin-top: 2rem;
+        }
+
+        #visualizer {
+            width: 100%;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .ticker {
+                font-size: 1.5rem;
+            }
+
+            .pepe-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .origin {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TRIPPER PEPE</h1>
+        <div class="ticker">$TRIPR</div>
+        <div class="pepe-container">
+            <img src="assets/tripping-pepe.png" alt="Tripper Pepe" class="pepe-img">
+        </div>
+        <div class="origin">
+            <p>The Boy's Club got a bit too wild one night out on the University of ZOGZ campus. After their normal sessions of drinking and smoking Royal OG ZOGZ kush, they decided to adventure. Andy, Brett and LandWolf slipped Pepe some Hedz style mushrooms and tabs. This led Pepe to reach his final form: TRIPPER PEPE. This is the legendary story of the frog that ate one too many (and his friends)...</p>
+        </div>
+        <div class="ca-container">
+            <span class="ca">CA: 3r9NBq46zKp7LKYqDHyBwyA4Vj8tuNazGaaActZSUhv9</span>
+            <button class="copy-btn" onclick="copyCA(this)">Copy CA</button>
+        </div>
+
+        <div class="social-buttons">
+            <a href="https://x.com/tripper_pepe" target="_blank">
+                <img src="assets/X.png" alt="Twitter" class="social-icon">
+            </a>
+            <a href="https://t.me/tripperpepe" target="_blank">
+                <img src="assets/telegram.png" alt="Telegram" class="social-icon">
+            </a>
+            <a href="https://dexscreener.com/solana/fvpweewpjxkyaim47mqgohmazgpkahfl99ky1zmlp6na" target="_blank">
+                <img src="assets/dexscreen.png" alt="Dexscreen" class="social-icon">
+            </a>
+        </div>
+
+        <audio id="audioPlayer" controls>
+            <source src="path/to/your/psychedelic/music.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <canvas id="visualizer"></canvas>
+    </div>
+    <canvas class="psychedelic-bg" id="bgCanvas"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Kaleidoscope Background
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function initCanvas() {
+            resizeCanvas();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('load', initCanvas);
+
+        function drawKaleidoscope(time) {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+
+            for (let i = 0; i < 12; i++) {
+                ctx.rotate(Math.PI * 2 / 12);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(canvas.width, 0);
+
+                const hue = (time / 30 + i * 30) % 360;
+                ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+                ctx.lineWidth = 10;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(canvas.width / 4, 0, canvas.width / 8, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${(hue + 180) % 360}, 100%, 50%)`;
+                ctx.fill();
+
+                // Add more complex patterns
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 4, 0);
+                ctx.lineTo(canvas.width / 2, canvas.height / 4);
+                ctx.lineTo(3 * canvas.width / 4, 0);
+                ctx.closePath();
+                ctx.fillStyle = `hsla(${(hue + 90) % 360}, 100%, 50%, 0.5)`;
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        // 3D Pepe Rotation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(300, 300);
+        document.querySelector('.pepe-container').appendChild(renderer.domElement);
+
+        const geometry = new THREE.PlaneGeometry(2, 2);
+        const texture = new THREE.TextureLoader().load('assets/tripping-pepe.png');
+        const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+        const pepe = new THREE.Mesh(geometry, material);
+        scene.add(pepe);
+
+        camera.position.z = 2;
+
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+        });
+
+        renderer.domElement.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaMove = {
+                    x: e.offsetX - previousMousePosition.x,
+                    y: e.offsetY - previousMousePosition.y
+                };
+
+                pepe.rotation.y += deltaMove.x * 0.01;
+                pepe.rotation.x += deltaMove.y * 0.01;
+            }
+
+            previousMousePosition = {
+                x: e.offsetX,
+                y: e.offsetY
+            };
+        });
+
+        function animatePepe() {
+            requestAnimationFrame(animatePepe);
+            renderer.render(scene, camera);
+        }
+
+        // Particle System
+        const particleCount = 1000;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 10;
+        }
+
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMaterial = new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.05 });
+        const particleSystem = new THREE.Points(particles, particleMaterial);
+        scene.add(particleSystem);
+
+        function animateParticles() {
+            const positions = particles.attributes.position.array;
+
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i] += 0.01 * (Math.random() - 0.5);
+                positions[i + 1] += 0.01 * (Math.random() - 0.5);
+                positions[i + 2] += 0.01 * (Math.random() - 0.5);
+
+                if (positions[i] < -5 || positions[i] > 5) positions[i] *= -1;
+                if (positions[i + 1] < -5 || positions[i + 1] > 5) positions[i + 1] *= -1;
+                if (positions[i + 2] < -5 || positions[i + 2] > 5) positions[i + 2] *= -1;
+            }
+
+            particles.attributes.position.needsUpdate = true;
+        }
+
+        // Audio Visualization
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioElement = document.getElementById('audioPlayer');
+        const audioSrc = audioContext.createMediaElementSource(audioElement);
+        const analyser = audioContext.createAnalyser();
+
+        audioSrc.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        const visualizer = document.getElementById('visualizer');
+        const visualizerCtx = visualizer.getContext('2d');
+
+        function drawVisualizer() {
+            const WIDTH = visualizer.width;
+            const HEIGHT = visualizer.height;
+
+            requestAnimationFrame(drawVisualizer);
+
+            analyser.getByteFrequencyData(dataArray);
+
+            visualizerCtx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            visualizerCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            const barWidth = (WIDTH / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i] / 2;
+
+                visualizerCtx.fillStyle = `hsl(${i * 360 / bufferLength}, 100%, 50%)`;
+                visualizerCtx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+                x += barWidth + 1;
+            }
+        }
+
+        function animate(time) {
+            drawKaleidoscope(time);
+            animateParticles();
+            requestAnimationFrame(animate);
+        }
+
+        animate(0);
+        animatePepe();
+        drawVisualizer();
+
+        function copyCA(button) {
+            const ca = "3r9NBq46zKp7LKYqDHyBwyA4Vj8tuNazGaaActZSUhv9";
+            navigator.clipboard.writeText(ca).then(() => {
+                button.innerText = "✔ Copied";
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = "Copy CA";
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Resize event listener
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            camera.aspect = 1;
+            camera.updateProjectionMatrix();
+            renderer.setSize(300, 300);
+        });
+
+        // Initialize visualizer size
+        visualizer.width = visualizer.clientWidth;
+        visualizer.height = visualizer.clientHeight;
+
+        // Start audio context on user interaction
+        document.body.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        });
+    </script>
+</body>
+</html>
