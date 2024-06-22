@@ -694,7 +694,11 @@
             }
         });
 
-
+        document.getElementById('youtubeVideo').addEventListener('mouseleave', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            }
+        });
 
         window.addEventListener('resize', resizeVisualizer);
         resizeVisualizer();
