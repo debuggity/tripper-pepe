@@ -394,112 +394,98 @@
             renderer.render(scene, camera);
         }
 
-        // Particle System Setup
-        const particleCount = 5000;
+        // Particle System
+        const particleCount = 1000;
         const particles = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
+        const velocities = new Float32Array(particleCount * 3);
+        const maxVelocity = 0.15;  // Limit for velocity
 
-        // Initialize positions, colors, and sizes
         for (let i = 0; i < particleCount; i++) {
-            const x = (Math.random() - 0.5) * 10;
-            const y = (Math.random() - 0.5) * 10;
-            const z = (Math.random() - 0.5) * 10;
+            positions[i * 3] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
 
-            positions[i * 3] = isNaN(x) ? 0 : x;
-            positions[i * 3 + 1] = isNaN(y) ? 0 : y;
-            positions[i * 3 + 2] = isNaN(z) ? 0 : z;
+            colors[i * 3] = Math.random();
+            colors[i * 3 + 1] = Math.random();
+            colors[i * 3 + 2] = Math.random();
 
-            const colorR = Math.random();
-            const colorG = Math.random();
-            const colorB = Math.random();
+            sizes[i] = Math.random() * 5;
 
-            colors[i * 3] = isNaN(colorR) ? 0 : colorR;
-            colors[i * 3 + 1] = isNaN(colorG) ? 0 : colorG;
-            colors[i * 3 + 2] = isNaN(colorB) ? 0 : colorB;
-
-            const size = Math.random() * 0.1 + 0.05;
-            sizes[i] = isNaN(size) ? 0.1 : size;
+            velocities[i * 3] = (Math.random() - 0.5) * 0.02;
+            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
+            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
         }
 
         particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         particles.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
-        const particleShader = {
-            vertexShader: `
-                attribute float size;
-                varying vec3 vColor;
-                void main() {
-                    vColor = color;
-                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                    gl_PointSize = size * (300.0 / -mvPosition.z);
-                    gl_Position = projectionMatrix * mvPosition;
-                }
-            `,
-            fragmentShader: `
-                varying vec3 vColor;
-                void main() {
-                    if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.475) discard;
-                    gl_FragColor = vec4(vColor, 1.0);
-                }
-            `
-        };
-
-        const particleMaterial = new THREE.ShaderMaterial({
-            vertexShader: particleShader.vertexShader,
-            fragmentShader: particleShader.fragmentShader,
+        const particleMaterial = new THREE.PointsMaterial({
+            vertexColors: true,
+            size: 0.1,
+            sizeAttenuation: true,
             transparent: true,
-            vertexColors: true
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
         });
 
         const particleSystem = new THREE.Points(particles, particleMaterial);
         scene.add(particleSystem);
 
-        function animateParticles(time) {
+        const mouse = new THREE.Vector2(0, 0);
+        const mouseEffectRadius = 2.0;
+        const friction = 0.98;  // Friction to slow down particles
+
+        document.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        function animateParticles() {
             const positions = particles.attributes.position.array;
-            const colors = particles.attributes.color.array;
             const sizes = particles.attributes.size.array;
+            const velocitiesArray = velocities;
 
             for (let i = 0; i < positions.length; i += 3) {
-                // Dynamic movement
-                const newX = positions[i] + Math.sin(time * 0.001 + i) * 0.01;
-                const newY = positions[i + 1] + Math.cos(time * 0.002 + i) * 0.01;
-                const newZ = positions[i + 2] + Math.sin(time * 0.003 + i) * 0.01;
+                const dx = positions[i] - (mouse.x * 5);
+                const dy = positions[i + 1] - (mouse.y * 5);
+                const dist = Math.sqrt(dx * dx + dy * dy);
 
-                positions[i] = isNaN(newX) ? 0 : Math.max(Math.min(newX, 5), -5);
-                positions[i + 1] = isNaN(newY) ? 0 : Math.max(Math.min(newY, 5), -5);
-                positions[i + 2] = isNaN(newZ) ? 0 : Math.max(Math.min(newZ, 5), -5);
+                if (dist < mouseEffectRadius) {
+                    const force = 0.001; // Lowered the force applied to particles
+                    velocitiesArray[i] += force * dx / dist;
+                    velocitiesArray[i + 1] += force * dy / dist;
+                }
 
-                // Color pulsing
-                const newR = Math.sin(time * 0.001 + i) * 0.5 + 0.5;
-                const newG = Math.sin(time * 0.002 + i) * 0.5 + 0.5;
-                const newB = Math.sin(time * 0.003 + i) * 0.5 + 0.5;
+                // Update position with velocity
+                positions[i] += velocitiesArray[i];
+                positions[i + 1] += velocitiesArray[i + 1];
+                positions[i + 2] += velocitiesArray[i + 2];
 
-                colors[i] = isNaN(newR) ? 0.5 : newR;
-                colors[i + 1] = isNaN(newG) ? 0.5 : newG;
-                colors[i + 2] = isNaN(newB) ? 0.5 : newB;
+                // Apply friction
+                velocitiesArray[i] *= friction;
+                velocitiesArray[i + 1] *= friction;
+                velocitiesArray[i + 2] *= friction;
 
-                // Size pulsing
-                const newSize = Math.sin(time * 0.004 + i) * 0.05 + 0.1;
-                sizes[i / 3] = isNaN(newSize) ? 0.1 : newSize;
+                // Limit maximum velocity
+                velocitiesArray[i] = Math.max(-maxVelocity, Math.min(maxVelocity, velocitiesArray[i]));
+                velocitiesArray[i + 1] = Math.max(-maxVelocity, Math.min(maxVelocity, velocitiesArray[i + 1]));
+                velocitiesArray[i + 2] = Math.max(-maxVelocity, Math.min(maxVelocity, velocitiesArray[i + 2]));
+
+                sizes[i / 3] = (Math.sin(i / 10 + performance.now() / 1000) + 1.5) * 2.5;
+
+                if (positions[i] < -5 || positions[i] > 5) velocitiesArray[i] *= -1;
+                if (positions[i + 1] < -5 || positions[i + 1] > 5) velocitiesArray[i + 1] *= -1;
+                if (positions[i + 2] < -5 || positions[i + 2] > 5) velocitiesArray[i + 2] *= -1;
             }
 
             particles.attributes.position.needsUpdate = true;
-            particles.attributes.color.needsUpdate = true;
             particles.attributes.size.needsUpdate = true;
         }
 
-        function animate(time) {
-            drawKaleidoscope(time);
-            animateParticles(time);
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-
-        animate(0);
-        
         // Audio Visualization
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const audioElement = document.getElementById('audioPlayer');
